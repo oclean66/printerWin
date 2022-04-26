@@ -5328,49 +5328,8 @@ object Form1: TForm1
     Height = 13
     Caption = '(Opcion no compatible con algunas impresoras)'
   end
-  object Button1: TButton
-    Left = 7
-    Top = 70
-    Width = 250
-    Height = 33
-    Caption = 'Imprimir pagina de prueba'
-    TabOrder = 0
-    OnClick = Button1Click
-  end
-  object ComboBox1: TComboBox
-    Left = 7
-    Top = 8
-    Width = 250
-    Height = 21
-    Style = csDropDownList
-    TabOrder = 1
-    OnChange = ComboBox1Change
-  end
-  object Button2: TButton
-    Left = 7
-    Top = 109
-    Width = 250
-    Height = 33
-    Caption = 'Cargar Prueba'
-    TabOrder = 2
-    OnClick = Button2Click
-  end
-  object CheckBox1: TCheckBox
-    Left = 7
-    Top = 32
-    Width = 250
-    Height = 17
-    Caption = 'Imprimir Logos en Ticket'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -16
-    Font.Name = 'Tahoma'
-    Font.Style = []
-    ParentFont = False
-    TabOrder = 3
-  end
   object Panel1: TPanel
-    Left = 320
+    Left = 328
     Top = 14
     Width = 217
     Height = 489
@@ -5383,8 +5342,8 @@ object Form1: TForm1
       217
       489)
     object Image1: TImage
-      Left = 68
-      Top = 14
+      Left = 62
+      Top = 15
       Width = 83
       Height = 79
       Picture.Data = {
@@ -8623,6 +8582,7 @@ object Form1: TForm1
         CAA22262D00000000049454E44AE426082}
       Proportional = True
       Stretch = True
+      Transparent = True
     end
     object Memo1: TMemo
       Left = 4
@@ -8641,11 +8601,70 @@ object Form1: TForm1
       TabOrder = 0
     end
   end
+  object Button1: TButton
+    Left = 8
+    Top = 70
+    Width = 250
+    Height = 33
+    Caption = 'Imprimir pagina de prueba'
+    TabOrder = 0
+    OnClick = Button1Click
+  end
+  object ComboBox1: TComboBox
+    Left = 7
+    Top = 8
+    Width = 250
+    Height = 21
+    Style = csDropDownList
+    TabOrder = 1
+    OnChange = ComboBox1Change
+  end
+  object Button2: TButton
+    Left = 7
+    Top = 109
+    Width = 250
+    Height = 33
+    Caption = 'Cargar Prueba'
+    TabOrder = 2
+    OnClick = Button2Click
+  end
+  object CheckBox1: TCheckBox
+    Left = 7
+    Top = 32
+    Width = 250
+    Height = 17
+    Caption = 'Imprimir Logos en Ticket'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -16
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 3
+  end
   object Memo2: TMemo
     Left = 8
     Top = 167
     Width = 249
     Height = 89
     TabOrder = 5
+  end
+  object Button3: TButton
+    Left = 120
+    Top = 301
+    Width = 75
+    Height = 25
+    Caption = 'Button3'
+    TabOrder = 6
+    OnClick = Button3Click
+  end
+  object Button4: TButton
+    Left = 8
+    Top = 262
+    Width = 250
+    Height = 33
+    Caption = 'Imprimir pagina corta'
+    TabOrder = 7
+    OnClick = Button4Click
   end
 end
