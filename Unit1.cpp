@@ -1,223 +1,283 @@
-//---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 #include <vcl.h>
 #pragma hdrstop
 
 #include "Unit1.h"
+#include <string>
 #include <System.JSON.hpp>
 #include <System.DateUtils.hpp>
 #include <System.SysUtils.hpp>
-//---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TForm1 *Form1;
-//---------------------------------------------------------------------------
-__fastcall TForm1::TForm1(TComponent* Owner)
-	: TForm(Owner)
-{
+
+// ---------------------------------------------------------------------------
+__fastcall TForm1::TForm1(TComponent* Owner) : TForm(Owner) {
 }
-//---------------------------------------------------------------------------
-void __fastcall TForm1::FormCreate(TObject *Sender)
-{
+
+// ---------------------------------------------------------------------------
+void __fastcall TForm1::FormCreate(TObject *Sender) {
 	ComboBox1->Items->Clear();
 	ComboBox1->Items = Printer()->Printers;
 	ComboBox1->ItemIndex = Printer()->PrinterIndex;
 	Memo2->Lines->Add(Printer()->Fonts->Text);
-	if(ParamCount() > 0){
-//		Memo1->Lines->Add(ParamStr(0));
+	if (ParamCount() > 0) {
+		// Memo1->Lines->Add(ParamStr(0));
 		Memo1->Lines->Add(ParamStr(1));
+//		Button1->Click();
+//		Application->Terminate();
 	}
-   else{
+	else {
 		Memo1->Lines->Clear();
 		Memo1->Lines->LoadFromFile("cache.bin");
 		Button1->Click();
 		Application->Terminate();
 	}
 
-
 }
-//---------------------------------------------------------------------------
-void __fastcall TForm1::Button1Click(TObject *Sender)
-{
+
+// ---------------------------------------------------------------------------
+void __fastcall TForm1::Button1Click(TObject *Sender) {
 
 	Memo1->Lines->Clear();
 	Memo1->Lines->LoadFromFile("cache.bin");
 	TFileName fileName = "cache.bin";
 
-	TJSONObject * objeto = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(Memo1->Lines->Text),0);
+	TJSONObject * objeto = (TJSONObject*) TJSONObject::ParseJSONValue
+		(TEncoding::ASCII->GetBytes(Memo1->Lines->Text), 0);
 	Memo1->Lines->Clear();
-
 
 	int pageline = 0;
 	Printer()->BeginDoc();
+	// logo
+	int max = 151 * 5;
+	int margin = 30;
+	int height = 43 * 5;
+	int pr = Printer()->PageWidth;
+	if (pr >= 300) {
+		max = 225 * 4;
+		margin = 35;
+		height = 65 * 5;
+	}
 	Printer()->Canvas->Font->Name = "consolas";
+	Printer()->Canvas->Font->Size = 7;  // 7
+//	Printer()->Canvas->StretchDraw(Rect(margin, 100, max, height),
+//		Image2->Picture->Graphic);
+//
+//	pageline = 5;
 
-	Printer()->Canvas->Font->Size = 7;
-	//    HEADER
-//	Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline, Printer()->PageWidth);
-//	pageline += 1;
+//	Printer()->Canvas->Font->Size = 8;
+//	Printer()->Canvas->Font->Style = TFontStyles() << fsBold;
 
+	// HEADER
 	TJSONObject * header = (TJSONObject*) objeto->GetValue("header");
 	for (int i = 0; i < header->Count; i++) {
-		Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline, StringReplace(header->Pairs[i]->JsonValue->ToString(), _D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+		Printer()->Canvas->TextOut(10, (10 + Printer()->Canvas->TextHeight("H"))
+			* pageline, StringReplace(header->Pairs[i]->JsonValue->ToString(),
+			_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
 		pageline += 1;
 	}
-	Printer()->Canvas->Font->Size = 7;
-	Printer()->Canvas->Font->Name = "consolas";
-
-	Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline, "--------------------------------");
+//		pageline += 2;
+	Printer()->Canvas->TextOut(10, (10 + Printer()->Canvas->TextHeight("H"))
+		* pageline, "--------------------------------");
 	pageline += 1;
-
-    //    BODY
+//	Printer()->Canvas->Font->Size = 65;
+	// BODY
 	TJSONObject * body = (TJSONObject*) objeto->GetValue("body");
 	for (int i = 0; i < body->Count; i++) {
 
 		TJSONObject * itemValue = (TJSONObject*)body->Pairs[i]->JsonValue;
 
 		for (int j = 0; j < itemValue->Count; j++) {
-			Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline,StringReplace(itemValue->Pairs[j]->JsonValue->ToString(), _D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+			Printer()->Canvas->TextOut(10,
+				(10 + Printer()->Canvas->TextHeight("H")) * pageline,
+				StringReplace(itemValue->Pairs[j]->JsonValue->ToString(),
+				_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
 			pageline += 1;
 		}
 	}
 
-
-	Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline, "--------------------------------");
+	Printer()->Canvas->TextOut(10, (10 + Printer()->Canvas->TextHeight("H"))
+		* pageline, "--------------------------------");
 	pageline += 1;
 
-
-//    FOOTER
+	// FOOTER
 	TJSONObject * footer = (TJSONObject*) objeto->GetValue("footer");
 	for (int i = 0; i < footer->Count; i++) {
-		Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline, StringReplace(footer->Pairs[i]->JsonValue->ToString(), _D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+		Printer()->Canvas->TextOut(10, (10 + Printer()->Canvas->TextHeight("H"))
+			* pageline, StringReplace(footer->Pairs[i]->JsonValue->ToString(),
+			_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
 		pageline += 1;
 	}
-
 
 	Printer()->EndDoc();
 	Application->Terminate();
 }
-//---------------------------------------------------------------------------
-void __fastcall TForm1::ComboBox1Change(TObject *Sender)
-{
+
+// ---------------------------------------------------------------------------
+void __fastcall TForm1::ComboBox1Change(TObject *Sender) {
 	Printer()->PrinterIndex = ComboBox1->ItemIndex;
 }
-//---------------------------------------------------------------------------
-void __fastcall TForm1::Button2Click(TObject *Sender)
-{
+
+// ---------------------------------------------------------------------------
+void __fastcall TForm1::Button2Click(TObject *Sender) {
 	Memo1->Lines->Clear();
 	Memo1->Lines->LoadFromFile("cache.bin");
 	TFileName fileName = "cache.bin";
 
-	TJSONObject * objeto = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(Memo1->Lines->Text),0);
+	TJSONObject * objeto = (TJSONObject*) TJSONObject::ParseJSONValue
+		(TEncoding::ASCII->GetBytes(Memo1->Lines->Text), 0);
 	Memo1->Lines->Clear();
 
-//    HEADER
+	// HEADER
 	TJSONObject * header = (TJSONObject*) objeto->GetValue("header");
 	for (int i = 0; i < header->Count; i++) {
-		Memo1->Lines->Add(StringReplace(header->Pairs[i]->JsonValue->ToString(), _D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+		Memo1->Lines->Add(StringReplace(header->Pairs[i]->JsonValue->ToString(),
+			_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
 	}
 
 	Memo1->Lines->Add("-------------------------------");
 
-//    BODY
+	// BODY
 	TJSONObject * body = (TJSONObject*) objeto->GetValue("body");
 	for (int i = 0; i < body->Count; i++) {
 
 		TJSONObject * itemValue = (TJSONObject*)body->Pairs[i]->JsonValue;
 
 		for (int j = 0; j < itemValue->Count; j++) {
-			Memo1->Lines->Add(StringReplace(itemValue->Pairs[j]->JsonValue->ToString(), _D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+			Memo1->Lines->Add
+				(StringReplace(itemValue->Pairs[j]->JsonValue->ToString(),
+				_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
 		}
 
 	}
 
 	Memo1->Lines->Add("-------------------------------");
 
-//    FOOTER
+	// FOOTER
 	TJSONObject * footer = (TJSONObject*) objeto->GetValue("footer");
 	for (int i = 0; i < footer->Count; i++) {
-		Memo1->Lines->Add(StringReplace(footer->Pairs[i]->JsonValue->ToString(), _D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+		Memo1->Lines->Add(StringReplace(footer->Pairs[i]->JsonValue->ToString(),
+			_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+	}
+
+}
+// ---------------------------------------------------------------------------
+
+void __fastcall TForm1::Button3Click(TObject *Sender) {
+
+	Printer()->BeginDoc();
+	int fontSize = 7;
+	int pageline = 0;
+	int max = 151 * 5;
+	int margin = 30;
+	int height = 43 * 5;
+	int pr = Printer()->PageWidth;
+	if (pr >= 300) {
+		max = 225 * 4;
+		margin = 35;
+		height = 65 * 5;
 	}
 
 
-}
-//---------------------------------------------------------------------------
+	Printer()->Canvas->Font->Name = "consolas";
+	Printer()->Canvas->Font->Size = fontSize;
+	Printer()->Canvas->Font->Style = TFontStyles() << fsBold;
+	pageline = 5;
 
+	Printer()->Canvas->TextOut(fontSize, ( Printer()->Canvas->TextHeight("H"))
+		* pageline, "--------------------------------");
+	pageline += 1;
 
+	Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
+		* pageline, pr);
+	pageline += 1;
 
+	Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
+		* pageline, max);
+	pageline += 1;
+	Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
+		* pageline, margin);
+	pageline += 1;
 
-void __fastcall TForm1::Button3Click(TObject *Sender)
-{
-
-	Printer()->BeginDoc();
-	Printer()->Canvas->StretchDraw(
-					Rect(100, 50, Printer()->PageWidth - 100,Printer()->PageWidth - 100),
-					Image1->Picture->Graphic);
 	Printer()->EndDoc();
 }
-//---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
-void __fastcall TForm1::Button4Click(TObject *Sender)
-{
-
+void __fastcall TForm1::Button4Click(TObject *Sender) {
+	int fontSize = 7;
+	int pageWidth = Printer()->PageWidth;
 	Memo1->Lines->Clear();
 	Memo1->Lines->LoadFromFile("short.bin");
-	TFileName fileName = "short.bin";
 
-	TJSONObject * objeto = (TJSONObject*) TJSONObject::ParseJSONValue(TEncoding::ASCII->GetBytes(Memo1->Lines->Text),0);
+	TJSONObject * objeto = (TJSONObject*) TJSONObject::ParseJSONValue
+		(TEncoding::ASCII->GetBytes(Memo1->Lines->Text), 0);
 	Memo1->Lines->Clear();
 
-
 	int pageline = 0;
+
+
 	Printer()->BeginDoc();
 	Printer()->Canvas->Font->Name = "consolas";
 
-	Printer()->Canvas->Font->Size = 7;
+	Printer()->Canvas->Font->Size = fontSize;
 	Printer()->Canvas->Font->Style = TFontStyles() << fsBold;
-	//    HEADER
-//	Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline, Printer()->PageWidth);
-//	pageline += 1;
-//	Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline, "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ°!#$%&/()=");
-//	pageline += 1;
+
+
+
+	Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
+		* pageline, fontSize);
+	pageline += 1;
+    Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
+		* pageline, pageWidth);
+	pageline += 1;
+
+	// HEADER
 
 	TJSONObject * header = (TJSONObject*) objeto->GetValue("header");
 	for (int i = 0; i < header->Count; i++) {
-		Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline, StringReplace(header->Pairs[i]->JsonValue->ToString(), _D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+		Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
+			* pageline, StringReplace(header->Pairs[i]->JsonValue->ToString(),
+			_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
 		pageline += 1;
 	}
-	Printer()->Canvas->Font->Size = 7;
-	Printer()->Canvas->Font->Name = "consolas";
 
-   	Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline, "--------------------------------");
+
+	Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
+		* pageline, "--------------------------------");
 	pageline += 1;
 
-    //    BODY
+	// BODY
 	TJSONObject * body = (TJSONObject*) objeto->GetValue("body");
 	for (int i = 0; i < body->Count; i++) {
 
 		TJSONObject * itemValue = (TJSONObject*)body->Pairs[i]->JsonValue;
 
 		for (int j = 0; j < itemValue->Count; j++) {
-			Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline,StringReplace(itemValue->Pairs[j]->JsonValue->ToString(), _D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+			Printer()->Canvas->TextOut(fontSize,
+				(fontSize + Printer()->Canvas->TextHeight("H")) * pageline,
+				StringReplace(itemValue->Pairs[j]->JsonValue->ToString(),
+				_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
 			pageline += 1;
 		}
 	}
 
-
-	Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline, "--------------------------------");
+	Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
+		* pageline, "--------------------------------");
 	pageline += 1;
 
-
-//    FOOTER
+	// FOOTER
 	TJSONObject * footer = (TJSONObject*) objeto->GetValue("footer");
 	for (int i = 0; i < footer->Count; i++) {
-		Printer()->Canvas->TextOut(10,(10 + Printer()->Canvas->TextHeight("H")) * pageline, StringReplace(footer->Pairs[i]->JsonValue->ToString(), _D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+		Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
+			* pageline, StringReplace(footer->Pairs[i]->JsonValue->ToString(),
+			_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
 		pageline += 1;
 	}
-
 
 	Printer()->EndDoc();
 	Application->Terminate();
 }
-//---------------------------------------------------------------------------
-
+// ---------------------------------------------------------------------------

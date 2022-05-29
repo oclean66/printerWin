@@ -8650,11 +8650,11 @@ object Form1: TForm1
     TabOrder = 5
   end
   object Button3: TButton
-    Left = 120
+    Left = 8
     Top = 301
-    Width = 75
+    Width = 249
     Height = 25
-    Caption = 'Button3'
+    Caption = 'TEST'
     TabOrder = 6
     OnClick = Button3Click
   end
