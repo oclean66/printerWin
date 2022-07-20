@@ -12,6 +12,11 @@
 #pragma package(smart_init)
 #pragma resource "*.dfm"
 TForm1 *Form1;
+int width = 80;
+int inter = 10;
+int margin = 0;
+int fontSize = 10;
+String font = "Arial";
 
 // ---------------------------------------------------------------------------
 __fastcall TForm1::TForm1(TComponent* Owner) : TForm(Owner) {
@@ -23,18 +28,29 @@ void __fastcall TForm1::FormCreate(TObject *Sender) {
 	ComboBox1->Items = Printer()->Printers;
 	ComboBox1->ItemIndex = Printer()->PrinterIndex;
 	Memo2->Lines->Add(Printer()->Fonts->Text);
-	if (ParamCount() > 0) {
-		// Memo1->Lines->Add(ParamStr(0));
-		Memo1->Lines->Add(ParamStr(1));
-//		Button1->Click();
-//		Application->Terminate();
+
+	for (int i = 1; i < ParamCount(); i++) {
+		Memo1->Lines->Add(ParamStr(i));
+		if (ParamStr(i) == "-width") {
+			Memo1->Lines->Add("Ancho: " + ParamStr(i + 1));
+			width = StrToInt(ParamStr(i + 1));
+		}
+		if (ParamStr(i) == "-fontSize") {
+			Memo1->Lines->Add("TLetra: " + ParamStr(i + 1));
+			fontSize = StrToInt(ParamStr(i + 1));
+		}
+		if (ParamStr(i) == "-inter") {
+			Memo1->Lines->Add("Interlineado: " + ParamStr(i + 1));
+			inter = StrToInt(ParamStr(i + 1));
+		}
+		if (ParamStr(i) == "-font") {
+			Memo1->Lines->Add("Letra: " + ParamStr(i + 1));
+			font = ParamStr(i + 1);
+		}
+
 	}
-	else {
-		Memo1->Lines->Clear();
-		Memo1->Lines->LoadFromFile("cache.bin");
-		Button1->Click();
-		Application->Terminate();
-	}
+	Button1->Click();
+	Application->Terminate();
 
 }
 
@@ -50,40 +66,31 @@ void __fastcall TForm1::Button1Click(TObject *Sender) {
 	Memo1->Lines->Clear();
 
 	int pageline = 0;
+	int lineas = 0;
 	Printer()->BeginDoc();
-	// logo
-	int max = 151 * 5;
-	int margin = 30;
-	int height = 43 * 5;
-	int pr = Printer()->PageWidth;
-	if (pr >= 300) {
-		max = 225 * 4;
-		margin = 35;
-		height = 65 * 5;
-	}
-	Printer()->Canvas->Font->Name = "consolas";
-	Printer()->Canvas->Font->Size = 7;  // 7
-//	Printer()->Canvas->StretchDraw(Rect(margin, 100, max, height),
-//		Image2->Picture->Graphic);
-//
-//	pageline = 5;
 
-//	Printer()->Canvas->Font->Size = 8;
-//	Printer()->Canvas->Font->Style = TFontStyles() << fsBold;
+	Printer()->Canvas->Font->Name = font;
+	Printer()->Canvas->Font->Size = fontSize;
+	Printer()->Canvas->Font->Style = TFontStyles() << fsBold;
 
 	// HEADER
 	TJSONObject * header = (TJSONObject*) objeto->GetValue("header");
 	for (int i = 0; i < header->Count; i++) {
-		Printer()->Canvas->TextOut(10, (10 + Printer()->Canvas->TextHeight("H"))
-			* pageline, StringReplace(header->Pairs[i]->JsonValue->ToString(),
-			_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+		lineas = lineas + ((inter + Printer()->Canvas->TextHeight("H")));
+		Printer()->Canvas->TextOut(margin, lineas,
+			StringReplace(header->Pairs[i]->JsonValue->ToString(), _D("\""),
+			_D(""), TReplaceFlags() << rfReplaceAll));
 		pageline += 1;
+		if (i > 0) {
+			Printer()->Canvas->Font->Style = TFontStyles();
+		}
 	}
-//		pageline += 2;
-	Printer()->Canvas->TextOut(10, (10 + Printer()->Canvas->TextHeight("H"))
-		* pageline, "--------------------------------");
+	// pageline += 2;
+	lineas = lineas + ((inter + Printer()->Canvas->TextHeight("H")));
+	Printer()->Canvas->TextOut(margin, lineas,
+		"--------------------------------");
 	pageline += 1;
-//	Printer()->Canvas->Font->Size = 65;
+	// Printer()->Canvas->Font->Size = 65;
 	// BODY
 	TJSONObject * body = (TJSONObject*) objeto->GetValue("body");
 	for (int i = 0; i < body->Count; i++) {
@@ -91,24 +98,37 @@ void __fastcall TForm1::Button1Click(TObject *Sender) {
 		TJSONObject * itemValue = (TJSONObject*)body->Pairs[i]->JsonValue;
 
 		for (int j = 0; j < itemValue->Count; j++) {
-			Printer()->Canvas->TextOut(10,
-				(10 + Printer()->Canvas->TextHeight("H")) * pageline,
+			lineas = lineas + ((inter + Printer()->Canvas->TextHeight("H")));
+			if (j >= 2) {
+				Printer()->Canvas->Font->Style = TFontStyles() << fsBold;
+			}
+			else {
+				Printer()->Canvas->Font->Style = TFontStyles();
+			}
+			Printer()->Canvas->TextOut(margin, lineas,
 				StringReplace(itemValue->Pairs[j]->JsonValue->ToString(),
 				_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
 			pageline += 1;
 		}
 	}
 
-	Printer()->Canvas->TextOut(10, (10 + Printer()->Canvas->TextHeight("H"))
-		* pageline, "--------------------------------");
+	lineas = lineas + ((inter + Printer()->Canvas->TextHeight("H")));
+	Printer()->Canvas->TextOut(margin, lineas,
+		"--------------------------------");
 	pageline += 1;
 
 	// FOOTER
 	TJSONObject * footer = (TJSONObject*) objeto->GetValue("footer");
 	for (int i = 0; i < footer->Count; i++) {
-		Printer()->Canvas->TextOut(10, (10 + Printer()->Canvas->TextHeight("H"))
-			* pageline, StringReplace(footer->Pairs[i]->JsonValue->ToString(),
-			_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+		if (i > 2) {
+			Printer()->Canvas->Font->Size = fontSize - 2;
+			Printer()->Canvas->Font->Style = TFontStyles() << fsBold;
+		}
+		lineas = lineas + ((inter + Printer()->Canvas->TextHeight("H")));
+
+		Printer()->Canvas->TextOut(margin, lineas,
+			StringReplace(footer->Pairs[i]->JsonValue->ToString(), _D("\""),
+			_D(""), TReplaceFlags() << rfReplaceAll));
 		pageline += 1;
 	}
 
@@ -181,25 +201,25 @@ void __fastcall TForm1::Button3Click(TObject *Sender) {
 		height = 65 * 5;
 	}
 
-
 	Printer()->Canvas->Font->Name = "consolas";
 	Printer()->Canvas->Font->Size = fontSize;
 	Printer()->Canvas->Font->Style = TFontStyles() << fsBold;
 	pageline = 5;
 
-	Printer()->Canvas->TextOut(fontSize, ( Printer()->Canvas->TextHeight("H"))
-		* pageline, "--------------------------------");
+	Printer()->Canvas->TextOut(fontSize,
+		(Printer()->Canvas->TextHeight("H")) * pageline,
+		"--------------------------------");
 	pageline += 1;
 
-	Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
-		* pageline, pr);
+	Printer()->Canvas->TextOut(fontSize,
+		(fontSize + Printer()->Canvas->TextHeight("H")) * pageline, pr);
 	pageline += 1;
 
-	Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
-		* pageline, max);
+	Printer()->Canvas->TextOut(fontSize,
+		(fontSize + Printer()->Canvas->TextHeight("H")) * pageline, max);
 	pageline += 1;
-	Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
-		* pageline, margin);
+	Printer()->Canvas->TextOut(fontSize,
+		(fontSize + Printer()->Canvas->TextHeight("H")) * pageline, margin);
 	pageline += 1;
 
 	Printer()->EndDoc();
@@ -218,35 +238,33 @@ void __fastcall TForm1::Button4Click(TObject *Sender) {
 
 	int pageline = 0;
 
-
 	Printer()->BeginDoc();
 	Printer()->Canvas->Font->Name = "consolas";
 
 	Printer()->Canvas->Font->Size = fontSize;
 	Printer()->Canvas->Font->Style = TFontStyles() << fsBold;
 
-
-
-	Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
-		* pageline, fontSize);
+	Printer()->Canvas->TextOut(fontSize,
+		(fontSize + Printer()->Canvas->TextHeight("H")) * pageline, fontSize);
 	pageline += 1;
-    Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
-		* pageline, pageWidth);
+	Printer()->Canvas->TextOut(fontSize,
+		(fontSize + Printer()->Canvas->TextHeight("H")) * pageline, pageWidth);
 	pageline += 1;
 
 	// HEADER
 
 	TJSONObject * header = (TJSONObject*) objeto->GetValue("header");
 	for (int i = 0; i < header->Count; i++) {
-		Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
-			* pageline, StringReplace(header->Pairs[i]->JsonValue->ToString(),
-			_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+		Printer()->Canvas->TextOut(fontSize,
+			(fontSize + Printer()->Canvas->TextHeight("H")) * pageline,
+			StringReplace(header->Pairs[i]->JsonValue->ToString(), _D("\""),
+			_D(""), TReplaceFlags() << rfReplaceAll));
 		pageline += 1;
 	}
 
-
-	Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
-		* pageline, "--------------------------------");
+	Printer()->Canvas->TextOut(fontSize,
+		(fontSize + Printer()->Canvas->TextHeight("H")) * pageline,
+		"--------------------------------");
 	pageline += 1;
 
 	// BODY
@@ -264,20 +282,27 @@ void __fastcall TForm1::Button4Click(TObject *Sender) {
 		}
 	}
 
-	Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
-		* pageline, "--------------------------------");
+	Printer()->Canvas->TextOut(fontSize,
+		(fontSize + Printer()->Canvas->TextHeight("H")) * pageline,
+		"--------------------------------");
 	pageline += 1;
 
 	// FOOTER
 	TJSONObject * footer = (TJSONObject*) objeto->GetValue("footer");
 	for (int i = 0; i < footer->Count; i++) {
-		Printer()->Canvas->TextOut(fontSize, (fontSize + Printer()->Canvas->TextHeight("H"))
-			* pageline, StringReplace(footer->Pairs[i]->JsonValue->ToString(),
-			_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
+		Printer()->Canvas->TextOut(fontSize,
+			(fontSize + Printer()->Canvas->TextHeight("H")) * pageline,
+			StringReplace(footer->Pairs[i]->JsonValue->ToString(), _D("\""),
+			_D(""), TReplaceFlags() << rfReplaceAll));
 		pageline += 1;
 	}
 
 	Printer()->EndDoc();
 	Application->Terminate();
+}
+
+// ---------------------------------------------------------------------------
+void __fastcall TForm1::Button6Click(TObject *Sender) {
+	Memo2->Lines->Add(Printer()->Fonts->Text);
 }
 // ---------------------------------------------------------------------------

@@ -3,8 +3,8 @@ object Form1: TForm1
   Top = 0
   BorderIcons = [biSystemMenu]
   Caption = 'Kingdeportes'
-  ClientHeight = 511
-  ClientWidth = 602
+  ClientHeight = 110
+  ClientWidth = 266
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -5317,8 +5317,8 @@ object Form1: TForm1
   Position = poScreenCenter
   OnCreate = FormCreate
   DesignSize = (
-    602
-    511)
+    266
+    110)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -5332,7 +5332,7 @@ object Form1: TForm1
     Left = 328
     Top = 14
     Width = 217
-    Height = 489
+    Height = 88
     Anchors = [akLeft, akTop, akBottom]
     Caption = 'Panel1'
     Color = clBtnHighlight
@@ -5340,7 +5340,7 @@ object Form1: TForm1
     TabOrder = 4
     DesignSize = (
       217
-      489)
+      88)
     object Image1: TImage
       Left = 62
       Top = 15
@@ -8588,7 +8588,7 @@ object Form1: TForm1
       Left = 4
       Top = 100
       Width = 210
-      Height = 378
+      Height = 0
       Anchors = [akLeft, akTop, akBottom]
       BorderStyle = bsNone
       Font.Charset = ANSI_CHARSET
@@ -8599,6 +8599,14 @@ object Form1: TForm1
       ParentFont = False
       ReadOnly = True
       TabOrder = 0
+    end
+    object Button5: TButton
+      Left = -240
+      Top = 368
+      Width = 75
+      Height = 25
+      Caption = 'Button5'
+      TabOrder = 1
     end
   end
   object Button1: TButton
@@ -8620,7 +8628,7 @@ object Form1: TForm1
     OnChange = ComboBox1Change
   end
   object Button2: TButton
-    Left = 7
+    Left = 8
     Top = 109
     Width = 250
     Height = 33
@@ -8647,6 +8655,7 @@ object Form1: TForm1
     Top = 167
     Width = 249
     Height = 89
+    ScrollBars = ssVertical
     TabOrder = 5
   end
   object Button3: TButton
@@ -8666,5 +8675,14 @@ object Form1: TForm1
     Caption = 'Imprimir pagina corta'
     TabOrder = 7
     OnClick = Button4Click
+  end
+  object Button6: TButton
+    Left = 16
+    Top = 351
+    Width = 241
+    Height = 25
+    Caption = 'Button6'
+    TabOrder = 8
+    OnClick = Button6Click
   end
 end
