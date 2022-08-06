@@ -116,7 +116,7 @@
         <VerInfo_Keys>CompanyName=kingdeportes.com;FileDescription=Kingdeportes - Asistente de Impresoras;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=;ProductName=King Printers;ProductVersion=1.0.0.0;Comments=Mejora la compatibilidad con impresoras nativas</VerInfo_Keys>
         <UWP_CppLogo44>D:\Github\printerZ\print-icon (1).png</UWP_CppLogo44>
         <UWP_CppLogo150>D:\Github\printerZ\print-icon.png</UWP_CppLogo150>
-        <Debugger_RunParams>-width 320 -fontSize 8 -inter -5 -font Consolas</Debugger_RunParams>
+        <Debugger_RunParams>-width 320 -fontSize 7 -inter -0 -font Consolas</Debugger_RunParams>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <Defines>NDEBUG;$(Defines)</Defines>

@@ -1,1 +1,38 @@
-{"header":{"one":"------- KINGDEPORTES ------","two":"002AG - AGENCIA POSTPAGO","tree":"Caja: agpostpago | Jugadas: 1","four":"07/07/2022 01:19 -0400","five":"Ticket:2826933 Serial:5277"},"body":{"3383932989369992793":{"one":"#329 08/07 19:00 Futbol","league":"Argentina Primera Division","two":"CA Rosario Cent/CA Sarmiento","tree":"+488 |  Gana Visita + Baja (2.5)"}},"footer":{"one":"APUESTA VES 10.00","two":"A COBRAR VES 58.90","tree":"--------------------------------","four":"TICKET SUJETO A LAS REGLAS DEL","five":"CONSORCIO, NO SE ANULA TICKET","six":"DESPUES DE 5 MIN, NO SE PAGA SIN","seven":"TICKET, CADUCA EN 30 DIAS, SERA ","eeig":"NULA TODA LINEA QUE CONTENGA ","nue":"*ERROR HUMANO, DE SISTEMA Y/O ","ocho":"PARTIDO INICIADO","eight":"","nine":"","ten":"-"}}
+{
+    "header": {
+        "one": "------- KINGDEPORTES ------",
+        "two": "002AG - AGENCIA POSTPAGO",
+        "tree": "Caja: agpostpago | Jugadas: 1",
+        "four": "07/07/2022 01:19 -0400",
+        "five": "Ticket:2826933 Serial:5277"
+    },
+    "body": {
+        "3383932989369992793": {
+            "one": "#329 08/07 19:00 Futbol",
+            "league": "Argentina Primera Division",
+            "two": "CA Rosario Cent/CA Sarmiento",
+            "tree": "+488 |  Gana Visita + Baja (2.5)"
+        },
+        "3383932989369592793": {
+            "one": "#329 08/07 19:00 Futbol",
+            "league": "Argentina Primera Division",
+            "two": "CA Rosario Cent/CA Sarmiento",
+            "tree": "+488 |  Gana Visita + Baja (2.5)"
+        }
+    },
+    "footer": {
+        "one": "APUESTA VES 10.00",
+        "two": "A COBRAR VES 58.90",
+        "tree": "--------------------------------",
+        "four": "TICKET SUJETO A LAS REGLAS DEL",
+        "five": "CONSORCIO, NO SE ANULA TICKET",
+        "six": "DESPUES DE 5 MIN, NO SE PAGA SIN",
+        "seven": "TICKET, CADUCA EN 30 DIAS, SERA ",
+        "eeig": "NULA TODA LINEA QUE CONTENGA ",
+        "nue": "*ERROR HUMANO, DE SISTEMA Y/O ",
+        "ocho": "PARTIDO INICIADO",
+        "eight": "",
+        "nine": "",
+        "ten": "-"
+    }
+}

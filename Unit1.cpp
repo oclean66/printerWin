@@ -65,38 +65,43 @@ void __fastcall TForm1::Button1Click(TObject *Sender) {
 		(TEncoding::ASCII->GetBytes(Memo1->Lines->Text), 0);
 	Memo1->Lines->Clear();
 
-	int pageline = 0;
+
 	int lineas = 0;
 	Printer()->BeginDoc();
 
 	Printer()->Canvas->Font->Name = font;
-	Printer()->Canvas->Font->Size = fontSize;
+	Printer()->Canvas->Font->Size = fontSize + 5;
 	Printer()->Canvas->Font->Style = TFontStyles() << fsBold;
 
 	// HEADER
 	TJSONObject * header = (TJSONObject*) objeto->GetValue("header");
 	for (int i = 0; i < header->Count; i++) {
+		if (i > 0) {
+			Printer()->Canvas->Font->Style = TFontStyles();
+			Printer()->Canvas->Font->Size = fontSize;
+		}
+		if(i==1)  lineas = lineas + 12;
+
 		lineas = lineas + ((inter + Printer()->Canvas->TextHeight("H")));
 		Printer()->Canvas->TextOut(margin, lineas,
 			StringReplace(header->Pairs[i]->JsonValue->ToString(), _D("\""),
 			_D(""), TReplaceFlags() << rfReplaceAll));
-		pageline += 1;
-		if (i > 0) {
-			Printer()->Canvas->Font->Style = TFontStyles();
-		}
 	}
-	// pageline += 2;
+
 	lineas = lineas + ((inter + Printer()->Canvas->TextHeight("H")));
 	Printer()->Canvas->TextOut(margin, lineas,
 		"--------------------------------");
-	pageline += 1;
-	// Printer()->Canvas->Font->Size = 65;
+
 	// BODY
 	TJSONObject * body = (TJSONObject*) objeto->GetValue("body");
 	for (int i = 0; i < body->Count; i++) {
 
 		TJSONObject * itemValue = (TJSONObject*)body->Pairs[i]->JsonValue;
-
+		if(i>0){
+			lineas = lineas + (inter + (Printer()->Canvas->TextHeight("H")));
+			Printer()->Canvas->TextOut(margin, lineas,"");
+			lineas = lineas + (inter - (Printer()->Canvas->TextHeight("H")/2));
+			}
 		for (int j = 0; j < itemValue->Count; j++) {
 			lineas = lineas + ((inter + Printer()->Canvas->TextHeight("H")));
 			if (j >= 2) {
@@ -108,14 +113,13 @@ void __fastcall TForm1::Button1Click(TObject *Sender) {
 			Printer()->Canvas->TextOut(margin, lineas,
 				StringReplace(itemValue->Pairs[j]->JsonValue->ToString(),
 				_D("\""), _D(""), TReplaceFlags() << rfReplaceAll));
-			pageline += 1;
 		}
 	}
 
 	lineas = lineas + ((inter + Printer()->Canvas->TextHeight("H")));
 	Printer()->Canvas->TextOut(margin, lineas,
 		"--------------------------------");
-	pageline += 1;
+
 
 	// FOOTER
 	TJSONObject * footer = (TJSONObject*) objeto->GetValue("footer");
@@ -129,7 +133,6 @@ void __fastcall TForm1::Button1Click(TObject *Sender) {
 		Printer()->Canvas->TextOut(margin, lineas,
 			StringReplace(footer->Pairs[i]->JsonValue->ToString(), _D("\""),
 			_D(""), TReplaceFlags() << rfReplaceAll));
-		pageline += 1;
 	}
 
 	Printer()->EndDoc();
